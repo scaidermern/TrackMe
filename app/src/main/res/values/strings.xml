@@ -9,7 +9,8 @@
     <string name="value_not_available_short">N/A</string>
     <string name="dialog_title_gps_provider_disabled">GPS Provider Disabled</string>
     <string name="dialog_body_gps_provider_disabled">GPS provider is disabled! 😞\nPlease enable it for location recording to work.</string>
-    <string name="info_gps_provider_enabled">GPS provider has been enabled 😃</string>
+    <string name="toast_gps_provider_enabled">GPS provider has been enabled 😃</string>
+    <string name="toast_location_permissions_missing">Location permissions are necessary for location recording 😔</string>
     <string name="backlog">Backlog:</string>
     <string name="backlog_locations">Locations:</string>
     <string name="backlog_distance">Distance:</string>

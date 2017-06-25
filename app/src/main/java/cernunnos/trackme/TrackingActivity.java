@@ -148,6 +148,8 @@ public class TrackingActivity extends AppCompatActivity {
                     startTracking();
                 } else {
                     Log.v(TAG, "No location permission granted by user :(");
+                    Toast toast = Toast.makeText(getApplicationContext(), R.string.toast_location_permissions_missing, Toast.LENGTH_LONG);
+                    toast.show();
                 }
                 break;
             }
@@ -307,7 +309,7 @@ public class TrackingActivity extends AppCompatActivity {
             dialog.show();
         } else {
             // notify about GPS provider being enabled now
-            Toast toast = Toast.makeText(getApplicationContext(), R.string.info_gps_provider_enabled, Toast.LENGTH_LONG);
+            Toast toast = Toast.makeText(getApplicationContext(), R.string.toast_gps_provider_enabled, Toast.LENGTH_LONG);
             toast.show();
         }
     }
