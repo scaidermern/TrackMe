@@ -1,0 +1,16 @@
+<resources>
+
+    <style name="AppTheme.NoActionBar">
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+
+        <!-- disabled, leads to white status bar with custom app tool bar
+             see https://stackoverflow.com/questions/32428700/status-bar-turns-white-and-does-not-show-content-behind-it -->
+        <!--item name="android:statusBarColor">@android:color/transparent</item-->
+
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+</resources>

@@ -1,0 +1,41 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_recording_header">
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@integer/pref_recording_default_min_distance"
+            android:inputType="number"
+            android:key="@string/preference_recording_min_distance"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_recording_title_min_distance"
+            android:summary="@string/pref_recording_summary_min_distance"/>
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@integer/pref_recording_default_min_time"
+            android:inputType="number"
+            android:key="@string/preference_recording_min_time"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_recording_title_min_time"
+            android:summary="@string/pref_recording_summary_min_time"/>
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@integer/pref_recording_default_max_locations"
+            android:inputType="number"
+            android:key="@string/preference_recording_max_locations"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_recording_title_max_locations"
+            android:summary="@string/pref_recording_summary_max_locations"/>
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

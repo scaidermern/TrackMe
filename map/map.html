@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+    <title>TrackMe</title>
+
+    <!-- leaflet -->
+    <link rel="stylesheet" type="text/css" href="leaflet/leaflet.css" />
+    <script type="text/javascript" src="leaflet/leaflet.js"></script>
+</head>
+<body>
+    <div id="map" style="position:absolute; top:0px; left:0px; right:0px; bottom:0px;"></div>
+
+    <script type="application/javascript">
+        function readTextFile(file) {
+            var content;
+            var rawFile = new XMLHttpRequest();
+            rawFile.open("GET", file, false);
+            rawFile.onreadystatechange = function() {
+                if(rawFile.readyState === 4) {
+                    if(rawFile.status === 200 || rawFile.status == 0) {
+                        content = rawFile.responseText;
+                    }
+                }
+            }
+            rawFile.send(null);
+            return content;
+        }
+
+        // set up map
+        var map = new L.Map("map", {
+	    // default position if no locations present
+            center: new L.LatLng(51.344,10.239),
+            zoom: 6
+        });
+        
+        var defaultAttrib = 'Map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors';
+
+        // OSM tile layer
+        var osmUrl = "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png";
+        var osmAttrib = defaultAttrib;
+        var osmLayer = new L.TileLayer(osmUrl, {minZoom: 2, maxZoom: 18, attribution: osmAttrib});
+        
+        // OSM.de tile layer
+        var osmdeUrl = "http://{s}.tile.openstreetmap.de/tiles/osmde/{z}/{x}/{y}.png";
+        var osmdeAttrib = defaultAttrib;
+        var osmdeSubdomains = ["a","b","c","d"];
+        var osmdeLayer = new L.TileLayer(osmdeUrl, {minZoom: 2, maxZoom: 18, attribution: osmdeAttrib, subdomains: osmdeSubdomains});
+
+        // default base layer
+        map.addLayer(osmLayer);
+        
+        // add location polyline
+        var locationContent = readTextFile("locations.txt").split('\n');
+        var locationList = [];
+        for (var i = 0; i < locationContent.length; i++) {
+            //document.write(i + ": " + locationContent[i] + "</br>");
+            var fields = locationContent[i].split(" ");
+            var lat = fields[0];
+            var lon = fields[1];
+            if (lat.length === 0 || lon.length === 0) {
+                continue;
+            }
+
+            //document.write(i + ": lat: " + lat + ", lon: " + lon + "</br>");
+            locationList.push(new L.LatLng(lat, lon));
+        }
+        var locationsPolyline = new L.polyline(locationList, {
+            color: "red",
+        });
+        locationsPolyline.addTo(map);
+        map.fitBounds(locationsPolyline.getBounds());
+
+        // add marker for last position
+        var curPos = locationList[locationList.length - 1];
+        var marker = new L.Marker(curPos, {
+                              icon: new L.Icon.Default({
+                                  iconUrl: "images/marker.png",
+                                  iconSize: [25, 41],
+                                  iconAnchor: [12, 41],
+                                  shadowUrl: "",
+                                  shadowSize: [0, 0]
+                              }),
+        }).addTo(map);
+        
+        // define base layers
+        var baseLayers = {
+            "OSM": osmLayer,
+            "OSM DE": osmdeLayer,
+        };
+
+        // add layer switcher
+        // note: all layers added via 'addLayer()' are enabled (=checked) by default
+        map.addControl(new L.Control.Layers(baseLayers));
+    </script>
+</body>
+</html>
+

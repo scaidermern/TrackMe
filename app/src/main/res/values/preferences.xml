@@ -1,0 +1,16 @@
+<resources>
+    <!-- preferences strings for matching between XML resources and SharedPreferences -->
+
+    <!-- upload preferences -->
+    <string name="preference_ftp_user_name">ftp_user_name</string>
+    <string name="preference_ftp_password">ftp_password</string>
+    <string name="preference_ftp_server">ftp_server</string>
+    <string name="preference_ftp_port">ftp_port</string>
+    <string name="preference_ftp_dir">ftp_dir</string>
+    <string name="preference_ftp_filename">ftp_filename</string>
+
+    <!-- location recording preferences -->
+    <string name="preference_recording_min_time">location_min_time</string>
+    <string name="preference_recording_min_distance">location_min_distance</string>
+    <string name="preference_recording_max_locations">location_max_locations</string>
+</resources>

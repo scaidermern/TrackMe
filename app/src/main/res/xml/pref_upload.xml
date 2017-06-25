@@ -1,0 +1,73 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <PreferenceCategory
+        android:title="@string/pref_upload_header_ftp_login">
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/pref_upload_default_ftp_user_name"
+            android:inputType="text"
+            android:key="@string/preference_ftp_user_name"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_upload_title_ftp_user_name" />
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/pref_upload_default_ftp_password"
+            android:inputType="textPassword"
+            android:key="@string/preference_ftp_password"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_upload_title_ftp_password" />
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/pref_upload_default_ftp_server"
+            android:inputType="text"
+            android:key="@string/preference_ftp_server"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_upload_title_ftp_server" />
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@integer/pref_upload_default_ftp_port"
+            android:inputType="number"
+            android:key="@string/preference_ftp_port"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_upload_title_ftp_port" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:title="@string/pref_upload_header_ftp_files">
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/pref_upload_default_ftp_dir"
+            android:inputType="text"
+            android:key="@string/preference_ftp_dir"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_upload_title_ftp_dir" />
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/pref_upload_default_ftp_filename"
+            android:inputType="text"
+            android:key="@string/preference_ftp_filename"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_upload_title_ftp_filename" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

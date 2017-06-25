@@ -1,0 +1,28 @@
+<preference-headers xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <header
+        android:fragment="cernunnos.trackme.SettingsActivity$UploadPreferenceFragment"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/pref_upload_header" />
+
+    <header
+        android:fragment="cernunnos.trackme.SettingsActivity$RecordingPreferenceFragment"
+        android:icon="@drawable/ic_location_black_24dp"
+        android:title="@string/pref_recording_header" />
+
+    <header
+        android:fragment="cernunnos.trackme.SettingsActivity$GeneralPreferenceFragment"
+        android:icon="@drawable/ic_info_black_24dp"
+        android:title="@string/pref_header_general" />
+
+    <header
+        android:fragment="cernunnos.trackme.SettingsActivity$NotificationPreferenceFragment"
+        android:icon="@drawable/ic_notifications_black_24dp"
+        android:title="@string/pref_header_notifications" />
+
+    <header
+        android:fragment="cernunnos.trackme.SettingsActivity$DataSyncPreferenceFragment"
+        android:icon="@drawable/ic_sync_black_24dp"
+        android:title="@string/pref_header_data_sync" />
+
+</preference-headers>
