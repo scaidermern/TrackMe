@@ -10,6 +10,7 @@ It can be used to share current position and location history with family and fr
 
 * Low battery consumption: GPS is only accessed every once in a while
 * Configurable location recording: based on distance and/or elapsed time
+* Tracking can be stopped at any time and continued at a later time
 * Completely open source: you can decide who has access to your locations (or rather who doesn't)
 
 # Examples
