@@ -4,14 +4,20 @@ Android app for tracking your locations and uploading them on your private serve
 # Description
 
 TrackMe records your location while uploading it to your server.
-It can be used to share location history with family and friends, e.g. during vacation trips.
+It can be used to share current position and location history with family and friends, e.g. during vacation trips.
+
+## Key Features
+
+* Low battery consumption: GPS is only accessed every once in a while
+* Configurable location recording: based on distance and/or elapsed time
+* Completely open source: you can decide who has access to your locations (or rather who doesn't)
 
 # Examples
 
 ## Tracking activity
 <img src="images/trackingActivity.jpg" width="200">
 
-## Map with recorded location
+## Map With Recorded Location
 <img src="images/map.jpg" width="200">
 
 # License
