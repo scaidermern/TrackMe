@@ -246,7 +246,7 @@ public class FTPService extends IntentService {
             if (!ftp.completePendingCommand()) {
                 Log.e(TAG, "onLocationChanged(): could not upload file: code: " + ftp.getReplyCode());
             }
-            Log.v(TAG, "onLocationChanged(): file upload succeeded");
+            Log.v(TAG, "onLocationChanged(): file upload with " + locations.size() + " locations succeeded");
         } catch (IOException e) {
             Log.e(TAG, "onLocationChanged(): could not upload file: " + e.getMessage());
             if (ftp.isConnected()) {

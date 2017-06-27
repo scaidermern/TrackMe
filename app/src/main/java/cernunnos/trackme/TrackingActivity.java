@@ -31,8 +31,9 @@ import java.util.Date;
  * / FTP intent service:
  *   - rework this pile of crap
  * - settings:
- *   - upload interval
  *   - calculate max expected data consumption (1/2/4/6 hours?)
+ *     - login/logout or just emptying locations file: 2006 bytes
+ *     - single location: 18 bytes
  *   - disable automatic ftp upload
  *   / ftp settings:
  *     / user, password, server, port, dir, filename
