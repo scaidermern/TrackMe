@@ -8,6 +8,7 @@
     <string name="preference_ftp_port">ftp_port</string>
     <string name="preference_ftp_dir">ftp_dir</string>
     <string name="preference_ftp_filename">ftp_filename</string>
+    <string name="preference_uploading_interval">uploading_interval</string>
 
     <!-- location recording preferences -->
     <string name="preference_recording_min_time">location_min_time</string>

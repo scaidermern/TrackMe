@@ -70,4 +70,19 @@
 
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/pref_upload_header_other">
+
+        <EditTextPreference
+            android:capitalize="words"
+            android:defaultValue="@string/pref_upload_default_interval"
+            android:inputType="number"
+            android:key="@string/preference_uploading_interval"
+            android:maxLines="1"
+            android:selectAllOnFocus="true"
+            android:singleLine="true"
+            android:title="@string/pref_upload_title_interval"
+            android:summary="@string/pref_upload_summary_interval" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

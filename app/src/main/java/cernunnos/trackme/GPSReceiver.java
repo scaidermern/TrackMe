@@ -62,25 +62,31 @@ public class GPSReceiver extends Service implements LocationListener {
     protected LocationManager locationManager;
 
     // minimum time interval between location updates, in seconds
-    // can be 0 for considering only minDistance
-    protected int minTime;
+    // can be 0 for considering only cMinDistanceMeters
+    protected int cMinTimeSecs;
 
     // minimum distance between location updates, in meters
-    // can be 0 for considering only minTime
-    protected float minDistance;
+    // can be 0 for considering only cMinTimeSecs
+    protected float cMinDistanceMeters;
 
     // maximum number of locations to store in backlog,
     // can be 0 for no upper limit
-    protected int maxLocations;
+    protected int cMaxLocations;
+
+    // minimum time between uploading if locations in seconds
+    protected long cUploadIntervalSecs;
 
     // minimum time between saving of locations to storage in minutes
-    protected final int saveInterval = 2;
+    protected final int saveIntervalMins = 2;
 
     // backlog of locations (first entry = oldest, last entry = newest)
     protected MyLocationList lastLocations = new MyLocationList();
 
+    // time of last upload of locations
+    protected long lastUploadMillis = 0;
+
     // time of last saving of locations to storage
-    protected long lastSave = 0;
+    protected long lastSaveMillis = 0;
 
     public GPSReceiver() {
     }
@@ -103,14 +109,17 @@ public class GPSReceiver extends Service implements LocationListener {
     protected void readSettings() {
         Log.v(TAG, "readSettings()");
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
-        minTime = Integer.parseInt(sharedPref.getString(getString(R.string.preference_recording_min_time),
-                String.valueOf(getResources().getInteger(R.integer.pref_recording_default_min_time))));
-        minDistance = Float.parseFloat(sharedPref.getString(getString(R.string.preference_recording_min_distance),
-                String.valueOf(getResources().getInteger(R.integer.pref_recording_default_min_distance))));
-        maxLocations = Integer.parseInt(sharedPref.getString(getString(R.string.preference_recording_max_locations),
-                String.valueOf(getResources().getInteger(R.integer.pref_recording_default_max_locations))));
+        cMinTimeSecs = Integer.parseInt(sharedPref.getString(getString(R.string.preference_recording_min_time),
+                getString(R.string.pref_recording_default_min_time)));
+        cMinDistanceMeters = Float.parseFloat(sharedPref.getString(getString(R.string.preference_recording_min_distance),
+                getString(R.string.pref_recording_default_min_distance)));
+        cMaxLocations = Integer.parseInt(sharedPref.getString(getString(R.string.preference_recording_max_locations),
+                getString(R.string.pref_recording_default_max_locations)));
+        cUploadIntervalSecs = Long.parseLong(sharedPref.getString(getString(R.string.preference_uploading_interval),
+                getString(R.string.pref_upload_default_interval)));
 
-        Log.v(TAG, "readSettings(): time: " + minTime + ", dist: " + minDistance + ", max locations: " + maxLocations);
+        Log.v(TAG, "readSettings(): minTime: " + cMinTimeSecs + "s, minDist: " + cMinDistanceMeters + "m, " +
+                "max locations: " + cMaxLocations + ", upload interval: " + cUploadIntervalSecs + "s");
     }
 
     @Override
@@ -132,8 +141,11 @@ public class GPSReceiver extends Service implements LocationListener {
             locationManager.removeUpdates(this);
         }
 
-        // save location backlog to internal storage
+        // force saving location backlog to internal storage
         saveProgressToStorage(true);
+
+        // force uploading locations to server
+        uploadProgress(true);
 
         isRecording = false;
     }
@@ -189,9 +201,10 @@ public class GPSReceiver extends Service implements LocationListener {
     @SuppressLint({"DefaultLocale", "SimpleDateFormat"})
     @Override
     public void onLocationChanged(Location location) {
+        Log.v(TAG, "onLocationChanged()");
         if (location != null) {
             // update backlog
-            if (maxLocations > 0 && lastLocations.size() + 1 >= maxLocations) {
+            if (cMaxLocations > 0 && lastLocations.size() + 1 >= cMaxLocations) {
                 lastLocations.removeFirst();
             }
             lastLocations.addLast(new MyLocation(location));
@@ -209,13 +222,13 @@ public class GPSReceiver extends Service implements LocationListener {
             manager.notify(NOTIFICATION_ID, buildNotification());
         }
 
-        // trigger ftp upload
-        FTPService.startActionStoreLocationList(this, lastLocations);
+        // trigger ftp upload if upload interval reached
+        uploadProgress(false);
     }
 
     /** Send broadcast message with location backlog */
     protected void sendLocationBroadcast() {
-        Log.v(TAG, "onProviderEnabled()");
+        Log.v(TAG, "sendLocationBroadcast()");
         Intent intent = new Intent(GPSReceiver.class.getSimpleName());
         intent.putExtra(EXTRA_PARAM_LOCATION_LIST, (Parcelable)lastLocations);
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
@@ -262,17 +275,12 @@ public class GPSReceiver extends Service implements LocationListener {
     protected void requestLocationUpdates() {
         Log.v(TAG, "requestLocationUpdates()");
 
-        if (isRecording) {
-            Log.w(TAG, "requestLocationUpdates(): already receiving location updates!");
-        }
-
         isRecording = true;
 
-        if (locationManager != null) {
-            locationManager.removeUpdates(this);
+        if (locationManager == null) {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, minTime * 1000, minDistance, this);
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, cMinTimeSecs * 1000, cMinDistanceMeters, this);
     }
 
     /**
@@ -316,8 +324,10 @@ public class GPSReceiver extends Service implements LocationListener {
         context.startService(intent);
     }
 
-    /** Save current location backlog to internal storage,
-     *  set force to true for saving even if saveInterval hasn't been reached yet */
+    /**
+     * Save current location backlog to internal storage.
+     * Set force to true for saving even if saveIntervalMins hasn't been reached yet
+     */
     protected void saveProgressToStorage(boolean force) {
         Log.v(TAG, "saveProgressToStorage(): force " + force);
         if (lastLocations == null) {
@@ -326,10 +336,10 @@ public class GPSReceiver extends Service implements LocationListener {
         }
 
         long now = System.currentTimeMillis();
-        if (!force && (now - lastSave) / 1000 / 60 < saveInterval) {
+        if (!force && (now - lastSaveMillis) / 1000 / 60 < saveIntervalMins) {
             return;
         }
-        lastSave = now;
+        lastSaveMillis = now;
 
         try {
             FileOutputStream outFile = openFileOutput(FILE_LOCATION_BACKLOG, Context.MODE_PRIVATE);
@@ -359,6 +369,26 @@ public class GPSReceiver extends Service implements LocationListener {
             lastLocations = new MyLocationList();
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Upload locations to server.
+     * Set force to true for saving even if cUploadIntervalSecs hasn't been reached yet
+     */
+    protected void uploadProgress(boolean force) {
+        Log.v(TAG, "uploadProgress(): force " + force);
+        if (lastLocations == null) {
+            Log.v(TAG, "uploadProgress(): lastLocations is null");
+            return;
+        }
+
+        long now = System.currentTimeMillis();
+        if (!force && (now - lastUploadMillis) / 1000 < cUploadIntervalSecs) {
+            return;
+        }
+        lastUploadMillis = now;
+
+        FTPService.startActionStoreLocationList(this, lastLocations);
     }
 
     /** Build status bar notification */

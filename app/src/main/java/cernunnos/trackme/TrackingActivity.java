@@ -27,7 +27,6 @@ import java.util.Date;
 
 /* TODO:
  * - app icon
- * / custom app bar (settings integration missing)
  * - own class for FTP access, allows to check FTP access in main activity
  * / FTP intent service:
  *   - rework this pile of crap
@@ -37,18 +36,20 @@ import java.util.Date;
  *   - disable automatic ftp upload
  *   / ftp settings:
  *     / user, password, server, port, dir, filename
- *     - FTPS?, active mode?
- *     - update interval (always, time interval)?
+ *     - FTPS? active mode?
+ *     - upload interval (always, time interval)?
  * - TrackingActivity:
  *   / average speed, max speed -> calculate avg between locations, max also additionally
  *   - button for "force add location"
  *   - display time of last upload
  *   - button for "force upload"?
+ * - show satellite information in TrackingActivity and status notification (periodic broadcast from GPSReceiver?)
  * - horizontal layout, rework main layout
  * - toolbar in SettingsActivity
  * - support for encoded polyline?
  * - support for location updates via wifi?
  * - additional upload mechanisms (e.g. HTTP)
+ * - avgSpeed: ignore idle times (easy) and tracking restarts (difficult, needs dummy location?)
  * - re-check activity lifecycle:
  *   - onPause(), onResume() https://developer.android.com/training/basics/activity-lifecycle/pausing.html
  *   - onStop(), onStart() https://developer.android.com/training/basics/activity-lifecycle/stopping.html

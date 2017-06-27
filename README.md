@@ -15,7 +15,7 @@ It can be used to share current position and location history with family and fr
 
 # Examples
 
-## Tracking activity
+## Tracking Activity
 <img src="images/trackingActivity.jpg" width="200">
 
 ## Map With Recorded Location

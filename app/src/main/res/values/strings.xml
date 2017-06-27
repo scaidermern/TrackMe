@@ -54,18 +54,24 @@
     <string name="pref_upload_default_ftp_dir">trackme</string>
     <string name="pref_upload_title_ftp_filename">Filename</string>
     <string name="pref_upload_default_ftp_filename">locations.txt</string>
+    <string name="pref_upload_title_interval">Upload Interval</string>
+    <string name="pref_upload_summary_interval">Upload interval in seconds. Use 0 to upload each new location.</string>
+
+    <!-- FTP other settings -->
+    <string name="pref_upload_header_other">Other</string>
+    <string name="pref_upload_default_interval">300</string>
 
     <!-- Location recording settings -->
     <string name="pref_recording_header">Location Recording</string>
     <string name="pref_recording_title_min_distance">Minimum distance</string>
-    <string name="pref_recording_summary_min_distance">Minimum distance between location updates (in meters). Use 0 for considering duration only.</string>
-    <integer name="pref_recording_default_min_distance">50</integer>
+    <string name="pref_recording_summary_min_distance">Minimum distance between location updates (in meters). Use 0 for considering duration only. For maximum power saving set this to 0 and use a duration only.</string>
+    <string name="pref_recording_default_min_distance">0</string>
     <string name="pref_recording_title_min_time">Minimum duration</string>
     <string name="pref_recording_summary_min_time">Minimum duration between location updates (in seconds). Use 0 for considering distance only.</string>
-    <integer name="pref_recording_default_min_time">10</integer>
+    <string name="pref_recording_default_min_time">60</string>
     <string name="pref_recording_title_max_locations">Maximum locations</string>
     <string name="pref_recording_summary_max_locations">Maximum locations to store. Any additional location will lead to dropping the oldest one. Use 0 for no upper limit.</string>
-    <integer name="pref_recording_default_max_locations">500</integer>
+    <string name="pref_recording_default_max_locations">500</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>

@@ -5,7 +5,7 @@
 
         <EditTextPreference
             android:capitalize="words"
-            android:defaultValue="@integer/pref_recording_default_min_distance"
+            android:defaultValue="@string/pref_recording_default_min_distance"
             android:inputType="number"
             android:key="@string/preference_recording_min_distance"
             android:maxLines="1"
@@ -16,7 +16,7 @@
 
         <EditTextPreference
             android:capitalize="words"
-            android:defaultValue="@integer/pref_recording_default_min_time"
+            android:defaultValue="@string/pref_recording_default_min_time"
             android:inputType="number"
             android:key="@string/preference_recording_min_time"
             android:maxLines="1"
@@ -27,7 +27,7 @@
 
         <EditTextPreference
             android:capitalize="words"
-            android:defaultValue="@integer/pref_recording_default_max_locations"
+            android:defaultValue="@string/pref_recording_default_max_locations"
             android:inputType="number"
             android:key="@string/preference_recording_max_locations"
             android:maxLines="1"

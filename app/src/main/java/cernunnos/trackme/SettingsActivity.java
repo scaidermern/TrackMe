@@ -209,6 +209,7 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_port)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_dir)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_filename)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_uploading_interval)));
         }
 
         @Override
@@ -228,6 +229,8 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             Log.v(TAG, "onDestroy()");
             // tell FTP service to update its settings
             FTPService.startActionReReadSettings(getActivity().getApplicationContext());
+            // tell GPS receiver service to update its settings (upload interval)
+            GPSReceiver.startActionReReadSettings(getActivity().getApplicationContext());
         }
     }
 
