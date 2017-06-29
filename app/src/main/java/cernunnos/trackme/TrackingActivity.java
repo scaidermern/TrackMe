@@ -41,7 +41,6 @@ import java.util.Date;
  *     - upload interval (always, time interval)?
  * - TrackingActivity:
  *   / average speed, max speed -> calculate avg between locations, max also additionally
- *   - button for "force add location"
  *   - display time of last upload
  *   - button for "force upload"?
  * - show satellite information in TrackingActivity and status notification (periodic broadcast from GPSReceiver?)
@@ -50,6 +49,7 @@ import java.util.Date;
  * - support for encoded polyline?
  * - support for location updates via wifi?
  * - additional upload mechanisms (e.g. HTTP)
+ * - setting for keeping the display on? (FLAG_KEEP_SCREEN_ON)
  * - avgSpeed: ignore idle times (easy) and tracking restarts (difficult, needs dummy location?)
  * - re-check activity lifecycle:
  *   - onPause(), onResume() https://developer.android.com/training/basics/activity-lifecycle/pausing.html
@@ -116,6 +116,10 @@ public class TrackingActivity extends AppCompatActivity {
                 Log.v(TAG, "onOptionsItemSelected(): action_start_stop_tracking");
                 startStopTracking();
                 return true;
+            case R.id.action_add_single_location:
+                Log.v(TAG, "onOptionsItemSelected(): action_add_single_location");
+                addSingleLocation();
+                return true;
             case R.id.action_clear_all_locations:
                 Log.v(TAG, "onOptionsItemSelected(): action_delete_locations");
                 AlertDialog dialog = new AlertDialog.Builder(this)
@@ -172,7 +176,7 @@ public class TrackingActivity extends AppCompatActivity {
     };
 
     /** Toggle location recording */
-    public void startStopTracking() {
+    protected void startStopTracking() {
         Log.v(TAG, "startStopTracking()");
         if (trackingEnabled) {
             stopTracking();
@@ -197,7 +201,7 @@ public class TrackingActivity extends AppCompatActivity {
     }
 
     /** Stop tracking */
-    public void stopTracking() {
+    protected void stopTracking() {
         Log.v(TAG, "stopTracking()");
         trackingEnabled = false;
 
@@ -218,6 +222,12 @@ public class TrackingActivity extends AppCompatActivity {
                 R.drawable.ic_my_location_recording_white_24dp :
                 R.drawable.ic_my_location_white_24dp);
         item.setChecked(trackingEnabled);
+    }
+
+    protected void addSingleLocation() {
+        Log.v(TAG, "addSingleLocation()");
+
+        GPSReceiver.startActionAddSingleLocation(this);
     }
 
     /** Handle location updates */

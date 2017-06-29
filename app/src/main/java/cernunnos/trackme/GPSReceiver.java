@@ -37,10 +37,12 @@ public class GPSReceiver extends Service implements LocationListener {
     private static final int NOTIFICATION_ID = 23;
 
     // actions
-    // start receiving location updates
+    // start receiving continuous location updates
     private static final String ACTION_RECEIVE_LOCATIONS = "action.receive_locations";
     // request broadcast message about current locations
     private static final String ACTION_BROADCAST_LOCATIONS = "action.broadcast_locations";
+    // add a single location
+    private static final String ACTION_ADD_SINGLE_LOCATION = "action.add_single_location";
     // delete all locations
     private static final String ACTION_DELETE_ALL_LOCATIONS = "action.delete_all_locations";
     // re-read settings
@@ -177,10 +179,13 @@ public class GPSReceiver extends Service implements LocationListener {
         switch (action) {
             case ACTION_RECEIVE_LOCATIONS:
                 startForeground(NOTIFICATION_ID, buildNotification());
-                requestLocationUpdates();
+                requestLocationUpdates(true /* continuous */);
                 break;
             case ACTION_BROADCAST_LOCATIONS:
                 sendLocationBroadcast();
+                break;
+            case ACTION_ADD_SINGLE_LOCATION:
+                requestLocationUpdates(false /* single */);
                 break;
             case ACTION_DELETE_ALL_LOCATIONS:
                 deleteLocations();
@@ -188,7 +193,7 @@ public class GPSReceiver extends Service implements LocationListener {
             case ACTION_REREAD_SETTINGS:
                 readSettings();
                 if (isRecording) {
-                    requestLocationUpdates();
+                    requestLocationUpdates(true /* continuous */);
                 }
                 break;
             default:
@@ -210,14 +215,20 @@ public class GPSReceiver extends Service implements LocationListener {
             lastLocations.addLast(new MyLocation(location));
         } // else continue, we have been called from deleteLocations()
 
+        // we just wanted to obtain a single location
+        if (!isRecording && locationManager != null) {
+            locationManager.removeUpdates(this);
+        }
+
         // save to storage if save interval reached or called from deleteLocations()
         saveProgressToStorage(location == null);
 
         // send broadcast message with location backlog
         sendLocationBroadcast();
 
-        // update status bar if we have a new location
-        if (location != null) {
+        // update status bar if we have a new location but only if tracking is enabled,
+        // otherwise we have been called to add a single location only
+        if (location != null && isRecording) {
             NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
             manager.notify(NOTIFICATION_ID, buildNotification());
         }
@@ -268,24 +279,28 @@ public class GPSReceiver extends Service implements LocationListener {
     }
 
     /**
-     * Start receiving location updates or change update interval
+     * Start receiving location updates (continuous or a single one) or change update interval.
      * We don't check for permissions here. This must be handled by the main activity!
      */
     @SuppressWarnings("MissingPermission")
-    protected void requestLocationUpdates() {
-        Log.v(TAG, "requestLocationUpdates()");
-
-        isRecording = true;
+    protected void requestLocationUpdates(boolean continuous) {
+        Log.v(TAG, "requestLocationUpdates(): continuous " + continuous);
 
         if (locationManager == null) {
             locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
+
+        if (continuous) {
+            isRecording = true;
+        }
+
+        // always request continuous updates. while there is requestSingleUpdate() for single locations
+        // it will break continuous updates if we are already recording. instead we will stop continuous
+        // updates depending on 'isRecording'.
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, cMinTimeSecs * 1000, cMinDistanceMeters, this);
     }
 
-    /**
-     * Start receiving location updates.
-     */
+    /** Start receiving continuous location updates. */
     public static void startActionReceiveLocations(final Context context) {
         Log.v(TAG, "startActionReceiveLocations()");
         Intent intent = new Intent(context, GPSReceiver.class);
@@ -293,9 +308,7 @@ public class GPSReceiver extends Service implements LocationListener {
         context.startService(intent);
     }
 
-    /**
-     * Request a broadcast message about current locations.
-     */
+    /** Request a broadcast message about current locations. */
     public static void startActionBroadcastLocations(final Context context) {
         Log.v(TAG, "startActionBroadcastLocations()");
         Intent intent = new Intent(context, GPSReceiver.class);
@@ -303,9 +316,15 @@ public class GPSReceiver extends Service implements LocationListener {
         context.startService(intent);
     }
 
-    /**
-     * Request a broadcast message about current locations.
-     */
+    /** Request a single location */
+    public static void startActionAddSingleLocation(final Context context) {
+        Log.v(TAG, "startActionAddSingleLocation()");
+        Intent intent = new Intent(context, GPSReceiver.class);
+        intent.setAction(ACTION_ADD_SINGLE_LOCATION);
+        context.startService(intent);
+    }
+
+    /** Request a broadcast message about current locations. */
     public static void startActionDeleteAllLocations(final Context context) {
         Log.v(TAG, "startActionDeleteAllLocations()");
         Intent intent = new Intent(context, GPSReceiver.class);

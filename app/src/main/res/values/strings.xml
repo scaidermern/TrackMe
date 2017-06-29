@@ -23,11 +23,12 @@
     <string name="time_unit_days">d</string>
 
     <!-- toolbar and related dialogs -->
-    <string name="action_start_tracking">Start Tracking</string>
-    <string name="action_stop_tracking">Stop Tracking</string>
+    <string name="action_start_tracking">Start tracking</string>
+    <string name="action_stop_tracking">Stop tracking</string>
+    <string name="action_add_single_location">Add single location</string>
     <string name="action_clear_all_locations">Clear locations</string>
     <string name="dialog_title_clear_all_locations">Clear All Locations</string>
-    <string name="dialog_body_clear_all_locations">Do you really want to delete all locations?</string>
+    <string name="dialog_body_clear_all_locations">Do you really want to delete all locations? This cannot be undone!</string>
     <string name="action_settings">Settings</string>
     <string name="activity_title_settings">Settings</string>
 

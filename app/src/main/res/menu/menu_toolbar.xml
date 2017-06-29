@@ -4,9 +4,15 @@
 
     <item
         android:id="@+id/action_start_stop_tracking"
-        android:icon="@android:drawable/ic_menu_mylocation"
+        android:icon="@drawable/ic_my_location_white_24dp"
         android:title="@string/action_start_tracking"
         app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_add_single_location"
+        android:icon="@drawable/ic_my_location_single_white_24px"
+        android:title="@string/action_add_single_location"
+        app:showAsAction="ifRoom" />
 
     <item
         android:id="@+id/action_clear_all_locations"
