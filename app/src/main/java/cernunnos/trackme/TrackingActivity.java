@@ -267,9 +267,9 @@ public class TrackingActivity extends AppCompatActivity {
 
         // distance to previous location
         TextView distance = (TextView)findViewById(R.id.distance);
-        distance.setText(Helper.humanReadableDistance(this, stats.distanceLast));
+        distance.setText(Helper.humanReadableDistance(this, stats.distanceLast, 1));
         if (curLocation != null && locations.size() >= 2) {
-            distance.setText(Helper.humanReadableDistance(this, stats.distanceLast));
+            distance.setText(Helper.humanReadableDistance(this, stats.distanceLast, 1));
         } else {
             distance.setText(getString(R.string.value_not_available_short));
         }
@@ -277,7 +277,7 @@ public class TrackingActivity extends AppCompatActivity {
         // accuracy
         TextView accuracy = (TextView)findViewById(R.id.accuracy);
         accuracy.setText((curLocation == null || !curLocation.hasAccuracy) ? getString(R.string.value_not_available_short) :
-                Helper.humanReadableDistance(this, curLocation.accuracy));
+                Helper.humanReadableDistance(this, curLocation.accuracy, 1));
     }
 
     /** Update backlog statistics such as number of locations, total distance etc. */
@@ -293,7 +293,7 @@ public class TrackingActivity extends AppCompatActivity {
         // total distance
         TextView distance = (TextView)findViewById(R.id.backlog_distance);
         distance.setText(noBacklog ? getString(R.string.value_not_available_short) :
-                Helper.humanReadableDistance(this, stats.distanceTotal));
+                Helper.humanReadableDistance(this, stats.distanceTotal, 1));
 
         // speed
         TextView speedAvgV = (TextView)findViewById(R.id.backlog_speed_avg);

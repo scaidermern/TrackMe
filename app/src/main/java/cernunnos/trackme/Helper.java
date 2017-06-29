@@ -6,28 +6,38 @@ import android.content.Context;
 /**
  * Contains various little helper functions
  */
-public class Helper {
-    /** converts a distance from meters to an human readable String */
+class Helper {
+    /**
+     * Converts a distance from meters to an human readable String
+     *
+     * @param precisionHint  Number of desired digits to show.
+     *                       Note that for larger numbers the precision will be reduced by 1 to keep the string short.
+     */
     @SuppressLint("DefaultLocale")
-    public static String humanReadableDistance(final Context context, final double value) {
+    static String humanReadableDistance(final Context context, final double value, final int precisionHint) {
+        final int reducedPrecision = precisionHint >= 1 ? precisionHint - 1 : 0;
         if (value >= 1000 * 100) { // >= 100 km
-            return String.format("%.0f %s",
+            final String formatNumber = "%." + reducedPrecision + "f";
+            return String.format(formatNumber + " %s",
                     value / 1000, context.getString(R.string.distance_unit_kilometers));
         } else if (value >= 1000) { // >= 1 km
-            return String.format("%.1f %s",
+            final String formatNumber = "%." + precisionHint + "f";
+            return String.format(formatNumber + " %s",
                     value / 1000f, context.getString(R.string.distance_unit_kilometers));
         } else if (value >= 100) { // >= 10 m
-            return String.format("%.0f %s",
+            final String formatNumber = "%." + reducedPrecision + "f";
+            return String.format(formatNumber + " %s",
                     value, context.getString(R.string.distance_unit_meters));
         } else { // < 1 km
-            return String.format("%.1f %s",
+            final String formatNumber = "%." + precisionHint + "f";
+            return String.format(formatNumber + " %s",
                     value, context.getString(R.string.distance_unit_meters));
         }
     }
 
-    /** converts a duration from milliseconds to an human readable String */
+    /** Converts a duration from milliseconds to an human readable String */
     @SuppressLint("DefaultLocale")
-    public static String humanReadableDuration(final Context context, final long milliSeconds) {
+    static String humanReadableDuration(final Context context, final long milliSeconds) {
         long tmp = milliSeconds / 1000;
         long seconds = tmp % 60;
         tmp /= 60;

@@ -414,11 +414,12 @@ public class GPSReceiver extends Service implements LocationListener {
     @SuppressLint("DefaultLocale")
     protected Notification buildNotification() {
         final MyLocationList.Statistics stats = lastLocations.getStatistics();
-        final String title = String.format("# %d %s %s",
+        final String title = String.format("# %d %s %s %.0f %s",
                 lastLocations.size(),
                 getString(R.string.notification_distance_short),
-                Helper.humanReadableDistance(this, stats.distanceTotal));
-        final String description = String.format("%s %.1f %s %s %.1f %s",
+                Helper.humanReadableDistance(this, stats.distanceTotal, 0),
+                stats.speedLast, getString(R.string.speed_unit_kilometers_per_hour));
+        final String description = String.format("%s %.0f %s %s %.0f %s",
                 getString(R.string.notification_speed_average_short),
                 stats.speedAvg, getString(R.string.speed_unit_kilometers_per_hour),
                 getString(R.string.notification_speed_max_short),
