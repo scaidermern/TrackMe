@@ -2,6 +2,7 @@
 <html>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <title>TrackMe</title>
 
@@ -30,7 +31,7 @@
 
         // set up map
         var map = new L.Map("map", {
-	    // default position if no locations present
+            // default position if no locations present
             center: new L.LatLng(51.344,10.239),
             zoom: 6
         });
@@ -75,12 +76,14 @@
         // add marker for last position
         var curPos = locationList[locationList.length - 1];
         var marker = new L.Marker(curPos, {
-                              icon: new L.Icon.Default({
-                                  iconUrl: "images/marker.png",
+                              icon: new L.Icon({
+                                  iconUrl: "images/marker-icon.png",
+                                  iconRetinaUrl: "images/marker-icon-2x.png",
                                   iconSize: [25, 41],
                                   iconAnchor: [12, 41],
-                                  shadowUrl: "",
-                                  shadowSize: [0, 0]
+                                  shadowUrl: "images/marker-shadow.png",
+                                  shadowRetinaUrl: "images/marker-shadow.png",
+                                  shadowSize: [41, 41]
                               }),
         }).addTo(map);
         
