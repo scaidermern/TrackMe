@@ -204,12 +204,12 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             // show current values as summary (except for the password)
-            bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_user_name)));
+            /*bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_user_name)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_server)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_port)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_dir)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_ftp_filename)));
-            bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_uploading_interval)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_uploading_interval)));*/
         }
 
         @Override
@@ -248,8 +248,9 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             setHasOptionsMenu(true);
 
             // show current values as summary
-            bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_recording_min_distance)));
+            /*bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_recording_min_distance)));
             bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_recording_min_time)));
+            bindPreferenceSummaryToValue(findPreference(getString(R.string.preference_recording_max_locations)));*/
         }
 
         @Override
