@@ -300,8 +300,13 @@ public class GPSReceiver extends Service implements LocationListener {
             locationManager.removeUpdates(this);
         }
 
+        // force saving to storage and uploading if
+        // - called from deleteLocations() -> location == null
+        // - asked to obtain a single location only -> !isRecording
+        boolean forceSaving = (location == null) || !isRecording;
+
         // save to storage if save interval reached or called from deleteLocations()
-        saveProgressToStorage(location == null);
+        saveProgressToStorage(forceSaving);
 
         // send broadcast message with location backlog
         sendLocationBroadcast();
@@ -314,7 +319,7 @@ public class GPSReceiver extends Service implements LocationListener {
         }
 
         // trigger ftp upload if upload interval reached or called from deleteLocations()
-        uploadProgress(location == null);
+        uploadProgress(forceSaving);
     }
 
     /** Send broadcast message with location backlog */
