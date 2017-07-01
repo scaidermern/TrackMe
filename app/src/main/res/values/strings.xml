@@ -41,26 +41,32 @@
     <!-- FTP upload login settings -->
     <string name="pref_upload_header">Upload</string>
     <string name="pref_upload_header_ftp_login">FTP Login</string>
-    <string name="pref_upload_title_ftp_user_name">user name</string>
+    <string name="pref_upload_title_ftp_user_name">User name</string>
+    <string name="pref_upload_summary_ftp_user_name">User name for login.</string>
     <string name="pref_upload_default_ftp_user_name">john_smith</string>
-    <string name="pref_upload_title_ftp_password">password</string>
+    <string name="pref_upload_title_ftp_password">Password</string>
+    <string name="pref_upload_summary_ftp_password">Password for login.</string>
     <string name="pref_upload_default_ftp_password">asdf</string>
-    <string name="pref_upload_title_ftp_server">server</string>
+    <string name="pref_upload_title_ftp_server">Server</string>
+    <string name="pref_upload_summary_ftp_server">Address of the FTP server.</string>
     <string name="pref_upload_default_ftp_server">interwebs.org</string>
-    <string name="pref_upload_title_ftp_port">port</string>
+    <string name="pref_upload_title_ftp_port">Port</string>
+    <string name="pref_upload_summary_ftp_port">FTP Port.</string>
     <integer name="pref_upload_default_ftp_port">21</integer>
 
     <!-- FTP upload files settings -->
     <string name="pref_upload_header_ftp_files">FTP Files</string>
     <string name="pref_upload_title_ftp_dir">Directory</string>
-    <string name="pref_upload_default_ftp_dir">trackme</string>
+    <string name="pref_upload_summary_ftp_dir">Relative or absolute path of the directory for the locations file.</string>
+    <string name="pref_upload_default_ftp_dir">/trackme</string>
     <string name="pref_upload_title_ftp_filename">Filename</string>
+    <string name="pref_upload_summary_ftp_filename">Name of the file to store the locations.</string>
     <string name="pref_upload_default_ftp_filename">locations.txt</string>
-    <string name="pref_upload_title_interval">Upload Interval</string>
-    <string name="pref_upload_summary_interval">Upload interval in seconds. Use 0 to upload each new location.</string>
 
     <!-- FTP other settings -->
     <string name="pref_upload_header_other">Other</string>
+    <string name="pref_upload_title_interval">Upload Interval</string>
+    <string name="pref_upload_summary_interval">Upload interval in seconds. Use 0 to upload each new location.</string>
     <string name="pref_upload_default_interval">300</string>
 
     <!-- Location recording settings -->

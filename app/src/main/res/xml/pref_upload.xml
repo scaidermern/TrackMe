@@ -11,7 +11,8 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_upload_title_ftp_user_name" />
+            android:title="@string/pref_upload_title_ftp_user_name"
+            android:summary="@string/pref_upload_summary_ftp_user_name"/>
 
         <EditTextPreference
             android:capitalize="words"
@@ -21,7 +22,8 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_upload_title_ftp_password" />
+            android:title="@string/pref_upload_title_ftp_password"
+            android:summary="@string/pref_upload_summary_ftp_password"/>
 
         <EditTextPreference
             android:capitalize="words"
@@ -31,7 +33,8 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_upload_title_ftp_server" />
+            android:title="@string/pref_upload_title_ftp_server"
+            android:summary="@string/pref_upload_summary_ftp_server"/>
 
         <EditTextPreference
             android:capitalize="words"
@@ -41,7 +44,8 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_upload_title_ftp_port" />
+            android:title="@string/pref_upload_title_ftp_port"
+            android:summary="@string/pref_upload_summary_ftp_port"/>
 
     </PreferenceCategory>
 
@@ -56,7 +60,8 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_upload_title_ftp_dir" />
+            android:title="@string/pref_upload_title_ftp_dir"
+            android:summary="@string/pref_upload_summary_ftp_dir"/>
 
         <EditTextPreference
             android:capitalize="words"
@@ -66,7 +71,8 @@
             android:maxLines="1"
             android:selectAllOnFocus="true"
             android:singleLine="true"
-            android:title="@string/pref_upload_title_ftp_filename" />
+            android:title="@string/pref_upload_title_ftp_filename"
+            android:summary="@string/pref_upload_summary_ftp_filename"/>
 
     </PreferenceCategory>
 
