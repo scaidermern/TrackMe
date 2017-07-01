@@ -35,12 +35,10 @@ import java.util.Date;
  *     - login/logout or just emptying locations file: 2006 bytes
  *     - single location: 18 bytes
  *   - disable automatic ftp upload
- *   / ftp settings:
- *     / user, password, server, port, dir, filename
+ *   - ftp settings:
  *     - FTPS? active mode?
  *     - upload interval (always, time interval)?
  * - TrackingActivity:
- *   / average speed, max speed -> calculate avg between locations, max also additionally
  *   - display time of last upload
  *   - button for "force upload"?
  * - show satellite information in TrackingActivity and status notification (periodic broadcast from GPSReceiver?)
@@ -102,7 +100,7 @@ public class TrackingActivity extends AppCompatActivity {
         final boolean firstRun = (optionsMenu == null);
         optionsMenu = menu;
         if (firstRun) {
-            updateStartStopAction();
+            updateStartStopActionLabel();
         }
         return true;
     }
@@ -166,6 +164,13 @@ public class TrackingActivity extends AppCompatActivity {
     private BroadcastReceiver mGPSReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
+            if (trackingEnabled != GPSReceiver.isRecording) {
+                // state of GPSReceiver doesn't match ours, this can happen if we are getting killed
+                // and the GPSReceiver service has been respawned automatically by Android
+                trackingEnabled = GPSReceiver.isRecording;
+                updateStartStopActionLabel();
+            }
+
             if (intent.hasExtra(GPSReceiver.EXTRA_PARAM_LOCATION_LIST)) {
                 final MyLocationList locations = intent.getParcelableExtra(GPSReceiver.EXTRA_PARAM_LOCATION_LIST);
                 handleLocationChanged(locations);
@@ -195,7 +200,7 @@ public class TrackingActivity extends AppCompatActivity {
         Log.v(TAG, "startTracking()");
         trackingEnabled = true;
 
-        updateStartStopAction();
+        updateStartStopActionLabel();
 
         GPSReceiver.startActionReceiveLocations(this);
     }
@@ -205,15 +210,21 @@ public class TrackingActivity extends AppCompatActivity {
         Log.v(TAG, "stopTracking()");
         trackingEnabled = false;
 
-        updateStartStopAction();
+        updateStartStopActionLabel();
 
-        Intent gpsIntent = new Intent(this, GPSReceiver.class);
-        stopService(gpsIntent);
+        // no need to completely stop the service, Android does this automatically if it is low on memory.
+        // otherwise GPSReceiver will write & upload locations twice (or it will have to check whether
+        // these operations are really necessary)
+        GPSReceiver.startActionStopReceiveLocations(this);
     }
 
     /** Update label and appearance of start/stop action */
-    protected void updateStartStopAction() {
+    protected void updateStartStopActionLabel() {
         Log.v(TAG, "setStartStopActionLabel()");
+        if (optionsMenu == null) {
+            Log.v(TAG, "setStartStopActionLabel(): optionsMenu doesn't exist (yet)");
+            return;
+        }
         MenuItem item = optionsMenu.findItem(R.id.action_start_stop_tracking);
         item.setTitle(trackingEnabled ?
                 getString(R.string.action_stop_tracking) :

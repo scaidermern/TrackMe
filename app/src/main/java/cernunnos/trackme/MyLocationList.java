@@ -44,6 +44,8 @@ class MyLocationList implements Parcelable, Serializable {
                 while (true) {
                     final MyLocation curLocation = it.next();
                     distanceTotal += prevLocation.distanceTo(curLocation);
+                    // we could replace the current speedAvg calculation by distance / time.
+                    // however distance is inaccurate, especially with low recording intervals.
                     speedAvg += curLocation.speed;
                     speedMax = Math.max(speedMax, curLocation.speed);
 

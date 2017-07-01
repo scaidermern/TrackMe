@@ -1,5 +1,6 @@
 package cernunnos.trackme;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -8,6 +9,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -16,9 +18,11 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -38,7 +42,9 @@ public class GPSReceiver extends Service implements LocationListener {
 
     // actions
     // start receiving continuous location updates
-    private static final String ACTION_RECEIVE_LOCATIONS = "action.receive_locations";
+    private static final String ACTION_START_RECORDING = "action.start_recording";
+    // stop receiving continuous location updates
+    private static final String ACTION_STOP_RECORDING = "action.stop_recording";
     // request broadcast message about current locations
     private static final String ACTION_BROADCAST_LOCATIONS = "action.broadcast_locations";
     // add a single location
@@ -97,19 +103,52 @@ public class GPSReceiver extends Service implements LocationListener {
     public void onCreate() {
         Log.v(TAG, "onCreate()");
 
-        // read settings
-        readSettings();
-
-        // (try to) read last location backlog from internal storage
-        restoreProgressFromStorage();
+        restoreState();
 
         // send broadcast message with location backlog from storage
         sendLocationBroadcast();
     }
 
-    /** Initialize location recording settings */
+    /**
+     * Restore activity state
+     */
+    protected void restoreState() {
+        Log.v(TAG, "restoreState()");
+
+        readSettings();
+
+        // (try to) read last location backlog from internal storage
+        restoreProgressFromStorage();
+
+        // killed while recording, automatically continue
+        if (isRecording) {
+            // toast disabled, will be annoying if we are constantly getting killed by another app
+            //Toast toast = Toast.makeText(getApplicationContext(), R.string.toast_location_recording_auto_restart, Toast.LENGTH_LONG);
+            //toast.show();
+
+            startRecording();
+        }
+    }
+
+    /**
+     * Store activity state
+     */
+    protected void storeState() {
+        Log.v(TAG, "storeState()");
+
+        writeSettings();
+
+        saveProgressToStorage(true /* force */);
+
+        uploadProgress(true /* force */);
+    }
+
+    /**
+     * Initialize location recording settings
+     */
     protected void readSettings() {
         Log.v(TAG, "readSettings()");
+
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
         cMinTimeSecs = Integer.parseInt(sharedPref.getString(getString(R.string.preference_recording_min_time),
                 getString(R.string.pref_recording_default_min_time)));
@@ -120,8 +159,25 @@ public class GPSReceiver extends Service implements LocationListener {
         cUploadIntervalSecs = Long.parseLong(sharedPref.getString(getString(R.string.preference_uploading_interval),
                 getString(R.string.pref_upload_default_interval)));
 
+        isRecording = sharedPref.getBoolean(getString(R.string.preference_recording_enabled), false);
+
         Log.v(TAG, "readSettings(): minTime: " + cMinTimeSecs + "s, minDist: " + cMinDistanceMeters + "m, " +
-                "max locations: " + cMaxLocations + ", upload interval: " + cUploadIntervalSecs + "s");
+                "max locations: " + cMaxLocations + ", upload interval: " + cUploadIntervalSecs + "s, " +
+                "recording: " + isRecording);
+    }
+
+    /**
+     * Save location recording settings
+     */
+    @SuppressLint("ApplySharedPref")
+    protected void writeSettings() {
+        Log.v(TAG, "writeSettings()");
+
+        // remember that we are recording in case of being killed and restarted by Android
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putBoolean(getString(R.string.preference_recording_enabled), isRecording);
+        editor.commit();
     }
 
     @Override
@@ -131,6 +187,7 @@ public class GPSReceiver extends Service implements LocationListener {
         if (intent != null && intent.getAction() != null) {
             onHandleIntent(intent);
         }
+
         return Service.START_STICKY;
     }
 
@@ -143,13 +200,7 @@ public class GPSReceiver extends Service implements LocationListener {
             locationManager.removeUpdates(this);
         }
 
-        // force saving location backlog to internal storage
-        saveProgressToStorage(true);
-
-        // force uploading locations to server
-        uploadProgress(true);
-
-        isRecording = false;
+        storeState();
     }
 
     @Override
@@ -177,9 +228,11 @@ public class GPSReceiver extends Service implements LocationListener {
 
         Log.v(TAG, "onHandleIntent(): action " + action);
         switch (action) {
-            case ACTION_RECEIVE_LOCATIONS:
-                startForeground(NOTIFICATION_ID, buildNotification());
-                requestLocationUpdates(true /* continuous */);
+            case ACTION_START_RECORDING:
+                startRecording();
+                break;
+            case ACTION_STOP_RECORDING:
+                stopRecording();
                 break;
             case ACTION_BROADCAST_LOCATIONS:
                 sendLocationBroadcast();
@@ -200,6 +253,33 @@ public class GPSReceiver extends Service implements LocationListener {
                 Log.e(TAG, "onHandleIntent(): invalid action: " + action);
                 break;
         }
+    }
+
+    /** Start receiving continuous location updates */
+    protected void startRecording() {
+        Log.v(TAG, "startRecording()");
+
+        isRecording = true;
+        writeSettings();
+
+        startForeground(NOTIFICATION_ID, buildNotification());
+        requestLocationUpdates(true /* continuous */);
+    }
+
+    /** Stop receiving continuous location updates */
+    protected void stopRecording() {
+        Log.v(TAG, "stopRecording()");
+
+        isRecording = false;
+        writeSettings();
+
+        if (locationManager != null) {
+            locationManager.removeUpdates(this);
+        }
+
+        storeState();
+
+        stopForeground(true);
     }
 
     /** Handle location updates */
@@ -280,18 +360,20 @@ public class GPSReceiver extends Service implements LocationListener {
 
     /**
      * Start receiving location updates (continuous or a single one) or change update interval.
-     * We don't check for permissions here. This must be handled by the main activity!
+     * We don't ask for permissions here. This must be handled by the main activity!
      */
     @SuppressWarnings("MissingPermission")
     protected void requestLocationUpdates(boolean continuous) {
         Log.v(TAG, "requestLocationUpdates(): continuous " + continuous);
 
-        if (locationManager == null) {
-            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            Toast toast = Toast.makeText(getApplicationContext(), R.string.toast_location_permissions_missing, Toast.LENGTH_LONG);
+            toast.show();
+            return;
         }
 
-        if (continuous) {
-            isRecording = true;
+        if (locationManager == null) {
+            locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         }
 
         // always request continuous updates. while there is requestSingleUpdate() for single locations
@@ -300,11 +382,19 @@ public class GPSReceiver extends Service implements LocationListener {
         locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, cMinTimeSecs * 1000, cMinDistanceMeters, this);
     }
 
-    /** Start receiving continuous location updates. */
+    /** Start receiving continuous location updates */
     public static void startActionReceiveLocations(final Context context) {
         Log.v(TAG, "startActionReceiveLocations()");
         Intent intent = new Intent(context, GPSReceiver.class);
-        intent.setAction(ACTION_RECEIVE_LOCATIONS);
+        intent.setAction(ACTION_START_RECORDING);
+        context.startService(intent);
+    }
+
+    /** Stop receiving continuous location updates */
+    public static void startActionStopReceiveLocations(final Context context) {
+        Log.v(TAG, "startActionStopReceiveLocations()");
+        Intent intent = new Intent(context, GPSReceiver.class);
+        intent.setAction(ACTION_STOP_RECORDING);
         context.startService(intent);
     }
 

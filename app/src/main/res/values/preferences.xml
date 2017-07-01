@@ -11,6 +11,7 @@
     <string name="preference_uploading_interval">uploading_interval</string>
 
     <!-- location recording preferences -->
+    <string name="preference_recording_enabled">recording_enabled</string>
     <string name="preference_recording_min_time">location_min_time</string>
     <string name="preference_recording_min_distance">location_min_distance</string>
     <string name="preference_recording_max_locations">location_max_locations</string>

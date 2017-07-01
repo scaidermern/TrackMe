@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 
-// file containing keystore configuration
+// file containing keystore configuration. if you don't have a keystore.properties yet then create one
+// in the project root directory. see https://developer.android.com/studio/publish/app-signing.html#secure-key
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 // load keytore configuration
 def keystoreProperties = new Properties()
